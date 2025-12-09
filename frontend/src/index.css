@@ -1,1 +1,72 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------- GLOBAL ---------------------- */
+
+body {
+  @apply bg-restaurant-cream text-gray-800 antialiased;
+  font-family: system-ui, sans-serif;
+}
+
+a {
+  @apply transition-colors duration-150;
+}
+
+::placeholder {
+  @apply text-gray-400;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+/* ---------------------- FORMS ---------------------- */
+
+input,
+textarea,
+select {
+  @apply border border-gray-300 rounded-md outline-none;
+  @apply focus:ring-2 focus:ring-restaurant-gold focus:border-restaurant-gold;
+  @apply transition;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ---------------------- BUTTONS ---------------------- */
+
+.btn-primary {
+  @apply bg-restaurant-gold text-white font-semibold px-4 py-2 rounded-md;
+  @apply hover:bg-yellow-600 transition shadow-sm hover:shadow;
+}
+
+/* ---------------------- MODALS ---------------------- */
+
+.modal-backdrop {
+  @apply fixed inset-0 bg-black/50 flex items-center justify-center z-30;
+}
+
+.modal-window {
+  @apply bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 overflow-hidden;
+}
+
+/* ---------------------- TITLES ---------------------- */
+
+.h-title {
+  @apply text-3xl font-serif text-restaurant-dark mb-4;
+}
+
+.h-subtitle {
+  @apply text-xl font-semibold text-restaurant-dark mb-2;
+}

@@ -4,7 +4,8 @@ import bookingRoutes from './bookingRoutes.js';
 
 const router = express.Router();
 
-router.use(authRoutes);
-router.use(bookingRoutes);
+
+router.use("/", authRoutes);
+router.use("/", bookingRoutes);
 
 export default router;

@@ -128,6 +128,28 @@ const getAllTables = (callback) => {
     callback(null, rows);
   });
 };
+
+// Занятые столы в пересекающемся интервале времени
+const getTakenTableIdsForInterval = (start, end, callback) => {
+  db.all(
+    `
+    SELECT DISTINCT bt.table_id
+    FROM bookingTable bt
+    JOIN booking b ON bt.booking_id = b.booking_id
+    WHERE b.status_booking = 'confirmed'
+      AND b.start_time_booking < ?
+      AND b.end_time_booking > ?
+    `,
+    [end, start],
+    (err, rows) => {
+      if (err) return callback(err, null);
+      const ids = rows.map((row) => row.table_id);
+      callback(null, ids);
+    }
+  );
+};
+
+
 // Бронирования
 const getAllBookings = (callback) => {
   db.all(`SELECT * FROM booking ORDER BY created_at DESC`, [], (err, rows) => {
@@ -198,7 +220,7 @@ db.serialize(() => {
   db.run(`
     INSERT INTO tablePlace (table_number, number_of_guests)
     VALUES 
-      (1,2),(2,2),(3,4),(4,4),(5,6),(6,8)
+      (1,1),(2,2),(3,4),(4,4),(5,6),(6,8),(7,10)
   `);
 });
 
@@ -213,4 +235,5 @@ export default {
   getAllBookings,
   getAllPersons,
   changeStatusBooking,
+  getTakenTableIdsForInterval,
 };

@@ -24,7 +24,7 @@ export const createBooking = (req, res, next) => {
         return res.status(401).json({ message: 'Authorization required' });
     }
 
-    const pesonId = req.person.peson_id;
+    const personId = req.person.person_id;
 
 
     db.checkReservation(
@@ -55,6 +55,51 @@ export const createBooking = (req, res, next) => {
         }   
     );
 }
+
+
+// GET /availability?date=YYYY-MM-DD&time=HH:MM&durationHours=2
+export const getAvailability = (req, res, next) => {
+    const { date, time, durationHours = 2 } = req.query;
+
+    if (!date || !time) {
+        return res.status(400).json({ message: "Missing 'date' or 'time' query params" });
+    }
+
+    const start = new Date(`${date}T${time}`);
+    if (Number.isNaN(start.getTime())) {
+        return res.status(400).json({ message: "Invalid date or time" });
+    }
+
+    const duration = Number(durationHours) || 2;
+    const end = new Date(start);
+    end.setHours(end.getHours() + duration);
+
+    const toIsoShort = (d) => d.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+    const startStr = toIsoShort(start);
+    const endStr = toIsoShort(end);
+
+    db.getTakenTableIdsForInterval(startStr, endStr, (err, takenIds) => {
+        if (err) return next(err);
+
+        db.getAllTables((err2, tables) => {
+            if (err2) return next(err2);
+
+            const availableTables = tables.filter(
+                (table) => !takenIds.includes(table.table_id)
+            );
+
+            res.json({
+                availableTables,
+                takenTableIds: takenIds,
+                start_time_booking: startStr,
+                end_time_booking: endStr,
+            });
+        });
+    });
+};
+
+
+
 
 
 // PATCH/bookings/:id/status - смена статуса бронирования
